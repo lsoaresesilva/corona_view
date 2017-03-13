@@ -25,7 +25,7 @@ local view = viewLoader:setView("layout.xml")
 
 -- Create a file with .xml extension in your project's folder, example:
 ```xml
-<LinearLayout id="layoutLinear" x="10" orientation="vertical" align="center" paddingX="10">
+<LinearLayout id="layoutLinear" orientation="vertical" align="center" paddingX="10">
     <Text id="txtUsername" x="10" y="10" text="Username"  />
     <TextField />
     <Text id="txtPassword" x="10" y="50" text="Password" />
@@ -35,7 +35,7 @@ local view = viewLoader:setView("layout.xml")
 ```
 And it is done.
 
-![alt tag](http://url/to/img.png)
+![alt tag](http://i36.photobucket.com/albums/e43/leonardo_soares4/screenshot_xmllayout_zpshkhn0ix0.png)
 
 * Inserting components programmatically 
 
