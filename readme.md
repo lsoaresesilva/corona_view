@@ -32,7 +32,7 @@ local view = viewLoader:setView("layout.xml")
     <TextField />
     <Button label="Login" />
 </LinearLayout>
-``
+```
 And it is done.
 
 ![alt tag](http://url/to/img.png)
