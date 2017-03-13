@@ -9,7 +9,7 @@ This library was inspired on Android and JavaFX user interface creation, and ena
 
 ## Instalation
 
-Just copy view.lua and linear_layout.lua to yout Corona project's folder.
+Just copy view.lua, linear_layout.lua, slaxdom.lua and slaxml.lua to yout Corona project's folder.
 
 ## Usage
 
@@ -17,12 +17,14 @@ Example:
 
 * Loading a view:
 
+```lua
 -- in your main.lua
 local viewLoader = require("view")
 local view = viewLoader:setView("layout.xml")
+```
 
 -- Create a file with .xml extension in your project's folder, example:
-
+```xml
 <LinearLayout id="layoutLinear" x="10" orientation="vertical" align="center" paddingX="10">
     <Text id="txtUsername" x="10" y="10" text="Username"  />
     <TextField />
@@ -30,7 +32,32 @@ local view = viewLoader:setView("layout.xml")
     <TextField />
     <Button label="Login" />
 </LinearLayout>
-
+``
 And it is done.
 
-![alt tag](http://i36.photobucket.com/albums/e43/leonardo_soares4/screenshot_xmllayout_zpshkhn0ix0.png)
+![alt tag](http://url/to/img.png)
+
+* Inserting components programmatically 
+
+```lua
+-- in your main.lua
+local widget = require("widget")
+
+local viewLoader = require("view")
+local view = viewLoader:setView("layout.xml")
+local layout = view:findLayoutById("layoutLinear")
+local recoverButton = widget.newButton({label="Recover"})
+layout:insert(recoverButton)
+```
+
+* Updating components programmatically 
+
+```lua
+-- in your main.lua
+local widget = require("widget")
+
+local viewLoader = require("view")
+local view = viewLoader:setView("layout.xml")
+local textUsername = view:findLayoutById("txtUsername")
+textUsername.text = "New Text!"
+```
