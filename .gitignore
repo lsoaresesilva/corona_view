@@ -4,3 +4,5 @@ config.lua
 linear_layout_unit_test.lua
 main.lua
 view_old.lua
+scene1.lua
+scene2.lua

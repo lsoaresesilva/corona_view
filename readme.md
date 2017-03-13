@@ -61,3 +61,25 @@ local view = viewLoader:setView("layout.xml")
 local textUsername = view:findLayoutById("txtUsername")
 textUsername.text = "New Text!"
 ```
+
+* Using with composer
+
+```lua
+-- in your scene.lua
+
+local composer = require("composer")
+local viewLoader = require("view")
+local view = viewLoader:setView("layout.xml")
+
+local scene = composer.newScene()
+
+function scene:create( event )
+ 
+    local sceneGroup = self.view
+    -- Code here runs when the scene is first created but has not yet appeared on screen
+    sceneGroup:insert(view)
+end
+
+return scene
+
+```

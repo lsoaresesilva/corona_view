@@ -1,12 +1,11 @@
 --[[
     
-    * Implementar o tipo TextBox
     * Implementar que o ID não possa ser repetido (2)
-    * Permitir incluir um elemento programaticamente ao layout
-    * Permitir remover um elemento programaticamente do layout (5)
-    * Permitir definir uma cor direto no layout
-    * retornar algo para ser usado no composer
-    ** Implementar nested layouts
+    * Permitir definir uma cor de componentes que tenham esta propriedade direto no layout (1)
+    * Retornar o layout para ser usado no composer
+    * Implementar nested layouts
+    * Permitir o uso de variaveis lua no XML
+    * permitir a definicao dos listeners diretamente no XML
 ]]
 
 local widget = require("widget")
@@ -43,7 +42,7 @@ function t:createFactory(tag, properties)
         joinTables(component, properties)
         
     elseif tag.name == "TextBox" then
-        component = native.newTextBox(150, 150, 180, 30)
+        component = native.newTextBox(150, 150, 180, 50)
         component.type = "textBox"
         joinTables(component, properties)
     elseif tag.name == "Button" then
