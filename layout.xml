@@ -1,0 +1,7 @@
+<LinearLayout id="layoutLinear" x="0" orientation="vertical" align="center">
+    <Text id="txtUsername" x="10" y="10" text="Username"  />
+    
+    <Text id="txtPassword" x="10" y="50" text="Password" />
+    
+    <Button id="btnLogin" label="Login" />
+</LinearLayout>
