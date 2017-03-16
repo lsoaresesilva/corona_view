@@ -1,18 +1,44 @@
+
 --[[
-    
+    Recursos
+        Componentes:
+            * BlankSpace - puts a blank space on screen
+            * Button
+            * Text
+            * Image
+            * TextField
+            * TextBox
+        Controllers:
+            * Associar listeners diretamente pelo XML
+                - Eventos suportados: 
+                    - Tap e Touch (qualquer componente)
+                    - Userinput (textfield e box)
+        CSS:
+            * Suporte para CSS no componente de texto
+                
+]]
+
+--[[
+    TODO: 
+    * Ajustar a implementação de insert para funcionar como uma árvore (1)
     * Implementar que o ID não possa ser repetido (2)
-    * Permitir definir uma cor de componentes que tenham esta propriedade direto no layout (1)
-    * Retornar o layout para ser usado no composer
-    * Implementar nested layouts
-    * Permitir o uso de variaveis lua no XML
-    * permitir a definicao dos listeners diretamente no XML
+    * Permitir o uso de variaveis lua no XML (3)
+    * Permitir internacionalização (2)
+    * Suporte para scroll (5)
+    * Suporte para lists (3)
+    * Suporte para CSS (4)
+        ** Parse CSS (1)
+            - https://github.com/reworkcss/css/blob/master/lib/parse/index.js
+        ** permitir carregar de qualquer arquivo
+    
 ]]
 
 local widget = require("widget")
 local linearLayout = require("linear_layout")
 
 local t = {
-    layoutsOnView = {}
+    layoutsOnView = {},
+    controller = nil
 }
 
 function joinTables(t1, t2)
@@ -35,11 +61,49 @@ function t:createFactory(tag, properties)
     if tag.name == "Text" then
         component = display.newText(properties)
         component.type = "text"
+    elseif tag.name == "BlankSpace" then
+        if not properties.x then
+            error("Image tag must specifie a x attribute")
+        end
+
+        if not properties.y then
+            error("Image tag must specifie a y attribute")
+        end
+
+        if not properties.width then
+            error("Image tag must specifie a width attribute")
+        end
+
+        if not properties.height then
+            error("Image tag must specifie a height attribute")
+        end
+        component = display.newRect(properties.x, properties.y, properties.width, properties.height)
+        component:setFillColor(0,0,0,0)
+        component:setStrokeColor(0)
+        component.type = "blankspace"
+        joinTables(component, properties)
     elseif tag.name == "TextField" then
         
         component = native.newTextField(150, 150, 180, 30)
         component.type = "textField"
         joinTables(component, properties)
+    elseif tag.name == "Image" then
+        
+        if not properties.filename then
+            error("Image tag must specifie a filename attribute")
+        end
+
+        if not properties.width then
+            error("Image tag must specifie a width attribute")
+        end
+
+        if not properties.height then
+            error("Image tag must specifie a height attribute")
+        end
+
+        component = display.newImageRect(properties.filename, properties.width, properties.height) -- should verify if filename was passed on XML, if not throws error
+        component.type = "image"
+        joinTables(component, properties)    
         
     elseif tag.name == "TextBox" then
         component = native.newTextBox(150, 150, 180, 50)
@@ -57,9 +121,59 @@ function t:createFactory(tag, properties)
         component.type = "slider"
     end
 
+    -- applying css styles
+
+    if component.type == "text" then
+        local css = require("style")
+        local color = require("convertcolor")
+
+        if properties.class ~= nil then
+            if css[properties.class] ~= nil then
+                    for k, v in pairs(css[properties.class]) do
+                        if k == "color" then
+                            component:setFillColor(color.hex(v))
+                        elseif k == "fontSize" then
+                            component.size = v
+                        end
+                    end
+            end
+        end
+
+         --unrequire( "style" )
+    end
+
+    -- common events
+    if self.controller ~=  nil then
+        
+        if properties.touch ~= nil then
+            if self.controller[properties.touch] ~= nil then
+                component:addEventListener("touch", self.controller[properties.touch])
+            else
+                error("The specified function: "..properties.touch.." for listener does not exists on controller")
+            end
+        end
+
+        if properties.tap ~= nil then
+            if self.controller[properties.tap] ~= nil then
+                component:addEventListener("tap", self.controller[properties.tap])
+            else
+                error("The specified function: "..properties.tap.." for listener does not exists on controller")
+            end
+        end
+
+        if (component.type == "textField" or component.type == "textBox") and properties.userInput ~= nil then
+            if self.controller[properties.userInput] ~= nil then
+                component:addEventListener("userInput", self.controller[properties.userInput])
+            else
+                error("The specified function: "..properties.userInput.." for listener does not exists on controller")
+            end
+        end
+    end
     return component
 end
 
+
+ 
 -- Creates a Corona Component from an specified XML TAG. Should not be called directly.
 -- @param tag A Lua table which represents a XML TAG.
 -- @return A Corona Component with all attributes specified on XML TAG.
@@ -68,6 +182,7 @@ function t:createComponentFromXML(tag)
     local properties = {}
     local componentId = nil
     for i = 1, #tag.attr do
+        
         if tag.attr[i].name == "id" then
             componentId = tag.attr[i].value
         elseif tag.attr[i].name ~= "text" or tag.attr[i].name ~= "label" then
@@ -92,17 +207,26 @@ end
 -- Create all Corona Components specified on XML which belongs to a layout. Should not be called directly.
 -- @param childs A table with XML TAG which belongs to a layout.
 -- @return A table with all Corona Components after parse.
-function t:extractComponents(childs)
-    local componentsFound = {}
-    for j,m in ipairs(childs) do 
+function t:extractComponentsAndSubLayouts(childs, rootLayout)
+    local layoutChilds = {}
+    --local layoutsFound = {}
+    for j,element in ipairs(childs) do 
             
-            local component = self:createComponentFromXML(m)
-            if component ~= nil then
-                table.insert(componentsFound, component)
+            if string.upper(element.name):find("LAYOUT") == nil then -- its a component, not layout
+                local component = self:createComponentFromXML(element)
+                if component ~= nil then
+                    table.insert(layoutChilds, component)
+                end
+            
+            else
+                table.insert(element.attr, {name="parentLayout", value=rootLayout})
+                element.type = "layout"
+                table.insert(layoutChilds, element)
+                
             end
     end
 
-    return componentsFound
+    return layoutChilds
 end
 
 -- Parses a Layout declared in XML and create all Corona Components on screen. Actually only LinearLayout is supported.
@@ -110,16 +234,14 @@ end
 function t:extractLayout(layout)
     
     if layout.name == "LinearLayout" then
-    
+        
         local layoutId
         local attrLayout = {}
         for i=1, #layout.attr do
 
             if layout.attr[i].name == "id" then
                 layoutId = layout.attr[i].value
-            end
-        
-            if layout.attr[i].name == "x" or layout.attr[i].name == "y" or layout.attr[i].name == "height" then
+            elseif layout.attr[i].name == "height" then
                 attrLayout[layout.attr[i].name] = tonumber(layout.attr[i].value)
             else
                 attrLayout[layout.attr[i].name] = layout.attr[i].value
@@ -130,14 +252,41 @@ function t:extractLayout(layout)
         if not layoutId then
             return nil
         end
-        
+       
         local hlayout = linearLayout:new(attrLayout)
-        local componentsFound = 
-        self:extractComponents(layout.el)
+        hlayout.type = "layout"
+        -- x,y do inner layout deverá ser a partir do que já tem na tela
+        local childs = self:extractComponentsAndSubLayouts(layout.el, hlayout)
+        
         self.layoutsOnView[layoutId] = hlayout
-        for i=1, #componentsFound do
-            hlayout:insert(componentsFound[i])
+        
+        for i=1, #childs do
+            local childFound = childs[i]
+            
+            -- its a layout as it does not have a type already.
+            -- we must extract its layout
+            
+            if childFound.type == "layout" then 
+                local innerLayout = self:extractLayout(childFound)
+                
+                hlayout:insert(innerLayout, false)
+            else
+                hlayout:insert(childFound, false)
+            end
+            
+            
         end
+        if hlayout.parentLayout == nil then -- only redraws when its finished with recursivity, and it is done when layout is a root element
+            hlayout:draw()
+        end
+        --[[for i=1, #layoutsFound do
+            
+            
+        end
+
+        for i=1, #componentsFound do
+            
+        end]]
 
         return hlayout
     end
@@ -146,17 +295,20 @@ end
 -- Parses the View declared as a XML and create all Corona Components declared on it.
 -- XML root must be of LinearLayout, as it is the only supported layout at the moment.
 -- Actually child elements can be from types:
-function t:setView(xml)
+function t:setView(xml, controller)
+    
+    self.controller = controller or nil
 
     local path = system.pathForFile(xml, system.ResourceDirectory)
     local hFile, err = io.open(path, "r");
 
     local SLAXML = require 'slaxdom' -- also requires slaxml.lua; be sure to copy both files
     local myxml = hFile:read("*a"); -- read file content
-    self.doc = SLAXML:dom(myxml)
+    local doc = SLAXML:dom(myxml)
 
     local rootLayout
-    for i,v in ipairs(self.doc.kids) do
+    for i,v in ipairs(doc.kids) do
+        
         rootLayout = self:extractLayout(v)
     end
 

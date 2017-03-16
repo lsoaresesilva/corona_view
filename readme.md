@@ -62,7 +62,7 @@ local textUsername = view:findLayoutById("txtUsername")
 textUsername.text = "New Text!"
 ```
 
-* Using with composer
+* Use with composer
 
 ```lua
 -- in your scene.lua
@@ -83,3 +83,13 @@ end
 return scene
 
 ```
+
+## Changelog
+
+* 0.2 - 15/03/2017
+
+** Added support for nested/inner layouts;
+** Added support for a css-like style (experimental);
+** Added support for listeners definition through XML (works for tap, touch and userinput events);
+** Added a two new components: Image and BlankSpace (inserts a blank space in yout layout);
+** Refactored the function to position components on screen, its much better now :)
