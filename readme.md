@@ -172,6 +172,35 @@ return styles
 </LinearLayout> 
 ```
 
+## One-way binding
+
+```lua
+controller = {
+    login = "",
+    password = ""
+}
+
+function controller.login(event)
+    if event.phase == "ended" then
+        print(controller.login)
+        print(controller.password)
+    end
+end
+local viewLoader = require("view")
+local view = viewLoader:setView("layout.xml", controller)
+```
+
+```xml
+<LinearLayout id="layoutLinear"  orientation="vertical" align="center">
+    <Text id="txtField" text="Login" class="alterandoCores"/>
+    <TextField model="login" />
+    <Text id="txtField" text="Password" class="alterandoCores"/>
+    <TextField model="password" />
+    <BlankSpace height="30" width="100"/>
+    <Button touch="login" label="Login"/>
+</LinearLayout>
+```
+
 ## APIDoc
 
 ```lua
