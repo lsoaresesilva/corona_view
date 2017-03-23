@@ -1,3 +1,9 @@
+--[[
+    Change log 0.3
+
+        - One way binding
+]]
+
 
 --[[
     Recursos
@@ -15,21 +21,28 @@
                     - Userinput (textfield e box)
         CSS:
             * Suporte para CSS no componente de texto
+        One-way binding
                 
 ]]
 
 --[[
     TODO: 
+    * Fazer um listener para os inputs. Ao alterar eles então deve ser pego o model e atualizar o seu valor (5)
+        ** Permitir informar os atributos de uma class, por exemplo: pessoa.nome, quebrar a string considerando o . e atribuir ao controlador[primeira_parte_da_string][segunda_parte]
+        ** Permitir a Convenção sobre configuração, será buscado no controlador o que for igual ao name do atributo
+        ** Pode ser usado o padrão observer para implementar o two-way binding
     * Ajustar a implementação de insert para funcionar como uma árvore (1)
     * Implementar que o ID não possa ser repetido (2)
     * Permitir o uso de variaveis lua no XML (3)
     * Permitir internacionalização (2)
+        * Permitir a leitura das strings a partir de um outro arquivo XML
     * Suporte para scroll (5)
     * Suporte para lists (3)
     * Suporte para CSS (4)
         ** Parse CSS (1)
             - https://github.com/reworkcss/css/blob/master/lib/parse/index.js
         ** permitir carregar de qualquer arquivo
+        ** permitir aplicar estilo a todos os componentes de um mesmo tipo
     
 ]]
 
@@ -62,22 +75,16 @@ function t:createFactory(tag, properties)
         component = display.newText(properties)
         component.type = "text"
     elseif tag.name == "BlankSpace" then
-        if not properties.x then
-            error("Image tag must specifie a x attribute")
-        end
-
-        if not properties.y then
-            error("Image tag must specifie a y attribute")
-        end
+        
 
         if not properties.width then
-            error("Image tag must specifie a width attribute")
+            error("BlankSpace tag must specifie a width attribute")
         end
 
         if not properties.height then
-            error("Image tag must specifie a height attribute")
+            error("BlankSpace tag must specifie a height attribute")
         end
-        component = display.newRect(properties.x, properties.y, properties.width, properties.height)
+        component = display.newRect(0, 0, properties.width, properties.height)
         component:setFillColor(0,0,0,0)
         component:setStrokeColor(0)
         component.type = "blankspace"
@@ -144,6 +151,25 @@ function t:createFactory(tag, properties)
 
     -- common events
     if self.controller ~=  nil then
+
+        if properties.model ~= nil then
+            
+            if self.controller[properties.model] ~= nil then
+                component:addEventListener("userInput", function(event)
+                    
+                    local target = event.target
+                    if target.type == "textField" or target.type == "textBox" then
+                            print("Modeling..")
+                            self.controller[properties.model] = target.text
+                            print(self.controller[properties.model])
+                    end
+                    
+
+                end)
+            else
+                error("The specified model: "..properties.model.." does not exists on controller")
+            end
+        end
         
         if properties.touch ~= nil then
             if self.controller[properties.touch] ~= nil then
@@ -185,17 +211,20 @@ function t:createComponentFromXML(tag)
         
         if tag.attr[i].name == "id" then
             componentId = tag.attr[i].value
-        elseif tag.attr[i].name ~= "text" or tag.attr[i].name ~= "label" then
+        elseif tag.attr[i].name ~= "text" or tag.attr[i].name ~= "label" or tag.attr[i].name ~= "model" then
             local numericValue = tonumber(tag.attr[i].value)
             if numericValue ~= nil then
                 tag.attr[i].value = numericValue
             end
+        
         end
         properties[tag.attr[i].name] = tag.attr[i].value
     end
 
     local component = self:createFactory(tag, properties)
     component.id = componentId
+
+
 
     if component ~= nil then
         return component
@@ -268,14 +297,12 @@ function t:extractLayout(layout)
             
             if childFound.type == "layout" then 
                 local innerLayout = self:extractLayout(childFound)
-                
                 hlayout:insert(innerLayout, false)
             else
                 hlayout:insert(childFound, false)
             end
-            
-            
         end
+
         if hlayout.parentLayout == nil then -- only redraws when its finished with recursivity, and it is done when layout is a root element
             hlayout:draw()
         end

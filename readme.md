@@ -4,45 +4,28 @@ CopyRight (C) 2017 - Leonardo Soares e Silva - lsoaresesilva@gmail.com
 
 ## Sumary
 
-Creating user interfaces for busines apps on Corona can be hard task if you compare to Android's Activity Design, for example.
-This library was inspired on Android and JavaFX user interface creation, and enables the creation of interfaces through XML files.
+Creating user interfaces for busines apps on Corona can be hard task if you compare to Android Activity Design, for example.
+
+This library was inspired on Android and JavaFX user interface creation, and enables the creation of user interfaces through XML files.
+
+** Resources:
+
+*** Support for Corona components: buttons, textfields, textbox, texts and images.
+*** Layout organizations horizontaly and verticaly with left and center aligns.
+*** Support for nested layouts.
+*** Defining components listeners through XML.
+*** Support for css-like stylishing of components.
+*** Support for one-way binding between lua variables and corona components.
 
 ## Instalation
 
 Just copy view.lua, linear_layout.lua, slaxdom.lua and slaxml.lua to yout Corona project's folder.
 
-## APIDoc
-
-```lua
-
--- View functions
-
--- Defines the layout to be shown on screen and the controller to manage listeners.
--- @param layout : XML file within layout declaration
--- @param controller : A Lua table which contains functions used to proccess listeners events
--- @return : A Lua table within all elements extracted from layout.
-setView(layout, controller)
-
-local viewLoader = require("view")
-local view = viewLoader:setView("layout.xml")
-
--- Searchs on view for the specified layout's id.
--- @param id : String which contains the layout's identifier we want to search.
--- @return : If a layout is found, returns it. If not returns nil.
-findLayoutById(id)
-
--- Searchs on layouts for the specified components's id.
--- @param id : String which contains the component's identifier we want to search.
--- @return : If a component is found, returns it. If not returns nil.
-findComponentById(id)
-
-```
-
 ## Usage
 
 Example:
 
-* Loading a view:
+## Loading a view:
 
 ```lua
 -- in your main.lua
@@ -62,9 +45,9 @@ local view = viewLoader:setView("layout.xml")
 ```
 And it is done.
 
-![alt tag](http://i36.photobucket.com/albums/e43/leonardo_soares4/screenshot_xmllayout_zpshkhn0ix0.png)
+![A login example](http://i36.photobucket.com/albums/e43/leonardo_soares4/screenshot_xmllayout_zpshkhn0ix0.png)
 
-* Inserting components programmatically 
+## Inserting components programmatically 
 
 ```lua
 -- in your main.lua
@@ -73,11 +56,11 @@ local widget = require("widget")
 local viewLoader = require("view")
 local view = viewLoader:setView("layout.xml")
 local layout = view:findLayoutById("layoutLinear")
-local recoverButton = widget.newButton({label="Recover"})
-layout:insert(recoverButton)
+local recoverPasswordButton = widget.newButton({label="Recover"})
+layout:insert(recoverPasswordButton)
 ```
 
-* Updating components programmatically 
+## Updating components programmatically 
 
 ```lua
 -- in your main.lua
@@ -89,7 +72,7 @@ local textUsername = view:findLayoutById("txtUsername")
 textUsername.text = "New Text!"
 ```
 
-* Use with composer
+## Use with composer
 
 ```lua
 -- in your scene.lua
@@ -111,8 +94,9 @@ return scene
 
 ```
 
-* Inner layouts, BlankSpace, Image example and touch listener example:
+## Example using inner layouts, blankSpace component and images.
 
+* A XML file with layout definition.
 ```xml
 
 <!-- An calculator example -->
@@ -138,7 +122,86 @@ return scene
 </LinearLayout>
 ```
 
+## Listener definition
+
+* In your lua file.
+```lua
+controller = {}
+function controller.doLogin(event)
+     -- will be called when button is touched!
+end
+
+local viewLoader = require("view")
+local view = viewLoader:setView("layout.xml", controller)
+```
+
+* A XML file with layout definition.
+```xml
+<LinearLayout id="layoutLinear"  orientation="vertical" align="center">
+    <Button touch="doLogin" label="Login"/>
+</LinearLayout> 
+```
+
+## CSS example
+
+This resource is based on CSS principles and you can define a css 'class' like with properties to stylish your elements. Actually only text component can be stylished. 
+
+You have to create a file named style.lua inside your main folder. A lua table will be used to define the stylish of your components. Each property inside this table must be a lua table and  will have properties to stylish our components.
+
+```lua
+-- style.lua
+
+styles = {
+    myTextStyle = {
+        color = "00bfd0",
+        fontSize = "20"
+    }
+}
+
+return styles
+```
+
+* A XML file with layout definition.
+```xml
+
+[..]
+<LinearLayout id="layoutLinear"  orientation="vertical" align="center">
+    <TextField id="txtField" class="myTextStyle"/>
+    <TextField id="otherField" class="myTextStyle"/>
+[..]
+</LinearLayout> 
+```
+
+## APIDoc
+
+```lua
+
+-- View functions
+
+-- Loads a layout from XML and displays on screen.
+-- @param layout : XML file within layout declaration (required)
+-- @param controller : A Lua table which contains listeners functions. (optional)
+-- @return : A Lua table within all elements extracted from layout.
+setView(layout, [controller])
+
+-- Searchs if there is a layout with the specified identifier.
+-- @param id : String which contains the layout's identifier we want to search.
+-- @return : If a layout is found, returns it. If not returns nil.
+findLayoutById(id)
+
+-- Searchs if there is a component with the specified identifier.
+-- @param id : String which contains the component's identifier we want to search.
+-- @return : If a component is found, returns it. If not returns nil.
+findComponentById(id)
+
+```
 ## Changelog
+
+* 0.3 - 22/03/2017
+
+** Minor modifications on BlankSpace component, still backward compatibility.
+** Added one-way binding between lua variables and corona components.
+** Improved the README.
 
 * 0.2 - 15/03/2017
 
