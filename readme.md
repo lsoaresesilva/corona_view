@@ -227,11 +227,6 @@ local view = viewLoader:setView("layout.xml", controller)
 ```xml
 <LinearLayout id="layoutLinear"  orientation="vertical" align="center">
     <Text id="txtLogin" text="Login" class="alterandoCores"/>
-    <TextField model="login" />
-    <Text id="txtPassword" text="Password" class="alterandoCores"/>
-    <TextField model="password" />
-    <BlankSpace height="30" width="100"/>
-    <Button touch="login" label="Login"/>
 </LinearLayout>
 ```
 
@@ -268,6 +263,10 @@ findComponentById(id)
 
 ```
 ## Changelog
+
+* 0.3.5 - 23/03/2017
+
+** Added a dependency injection like to map components defined in XML into lua variables for easy access.
 
 * 0.3 - 22/03/2017
 
