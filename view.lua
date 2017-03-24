@@ -38,6 +38,7 @@
         * Permitir a leitura das strings a partir de um outro arquivo XML
     * Suporte para scroll (5)
     * Suporte para lists (3)
+    * Adicionar um bind para cada componente localizado a ser criado no controller.
     * Suporte para CSS (4)
         ** Parse CSS (1)
             - https://github.com/reworkcss/css/blob/master/lib/parse/index.js
@@ -88,12 +89,12 @@ function t:createFactory(tag, properties)
         component:setFillColor(0,0,0,0)
         component:setStrokeColor(0)
         component.type = "blankspace"
-        joinTables(component, properties)
+        
     elseif tag.name == "TextField" then
         
         component = native.newTextField(150, 150, 180, 30)
         component.type = "textField"
-        joinTables(component, properties)
+        
     elseif tag.name == "Image" then
         
         if not properties.filename then
@@ -110,12 +111,12 @@ function t:createFactory(tag, properties)
 
         component = display.newImageRect(properties.filename, properties.width, properties.height) -- should verify if filename was passed on XML, if not throws error
         component.type = "image"
-        joinTables(component, properties)    
+        
         
     elseif tag.name == "TextBox" then
         component = native.newTextBox(150, 150, 180, 50)
         component.type = "textBox"
-        joinTables(component, properties)
+        
     elseif tag.name == "Button" then
         properties["shape"] = "roundedRect"
         properties["fillColor"] = { default={1,0,0,1}, over={1,0.1,0.7,0.4} }
@@ -127,6 +128,8 @@ function t:createFactory(tag, properties)
         component = widget.newSlider(properties)
         component.type = "slider"
     end
+
+    joinTables(component, properties)
 
     -- applying css styles
 
@@ -195,6 +198,8 @@ function t:createFactory(tag, properties)
             end
         end
     end
+
+
     return component
 end
 
@@ -297,8 +302,12 @@ function t:extractLayout(layout)
             
             if childFound.type == "layout" then 
                 local innerLayout = self:extractLayout(childFound)
+                
                 hlayout:insert(innerLayout, false)
             else
+                if childFound.id ~= nil then
+                    self.controller[childFound.id] = childFound
+                end
                 hlayout:insert(childFound, false)
             end
         end

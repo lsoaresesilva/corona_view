@@ -11,11 +11,32 @@ This library was inspired on Android and JavaFX user interface creation, and ena
 ** Resources:
 
 *** Support for Corona components: buttons, textfields, textbox, texts and images.
+
+Create corona components directly through XML.
+
 *** Layout organizations horizontaly and verticaly with left and center aligns.
+
+Corona components can be organized horizontaly and verticaly with left and center aligns.
+
 *** Support for nested layouts.
+
+Supports for layouts, with diferents organizations, inside other layouts
+
 *** Defining components listeners through XML.
+
+Define component listeners without needing to call :addEventListener manualy.
+
 *** Support for css-like stylishing of components.
+
+Stylish components using a css-like syntax. You can even reuse definitions in many components.
+
 *** Support for one-way binding between lua variables and corona components.
+
+You can define a bind between a variable and a input component like textfield. Everytime this component changes it values the variable will also change.
+
+*** Support for binding xml to components in lua
+
+Every component added to layout will automatically create a reference as a lua variable. Kind of a dependency injection.
 
 ## Instalation
 
@@ -192,13 +213,35 @@ local view = viewLoader:setView("layout.xml", controller)
 
 ```xml
 <LinearLayout id="layoutLinear"  orientation="vertical" align="center">
-    <Text id="txtField" text="Login" class="alterandoCores"/>
+    <Text id="txtLogin" text="Login" class="alterandoCores"/>
     <TextField model="login" />
-    <Text id="txtField" text="Password" class="alterandoCores"/>
+    <Text id="txtPassword" text="Password" class="alterandoCores"/>
     <TextField model="password" />
     <BlankSpace height="30" width="100"/>
     <Button touch="login" label="Login"/>
 </LinearLayout>
+```
+
+## Component bind (dependency injection)
+
+```xml
+<LinearLayout id="layoutLinear"  orientation="vertical" align="center">
+    <Text id="txtLogin" text="Login" class="alterandoCores"/>
+    <TextField model="login" />
+    <Text id="txtPassword" text="Password" class="alterandoCores"/>
+    <TextField model="password" />
+    <BlankSpace height="30" width="100"/>
+    <Button touch="login" label="Login"/>
+</LinearLayout>
+```
+
+```lua
+controller = {}
+
+local viewLoader = require("view")
+local view = viewLoader:setView("layout.xml", controller)
+-- Use the id defined to have access for the component in your controller
+print(controller.txtLogin.text) -- will print "Login"
 ```
 
 ## APIDoc
