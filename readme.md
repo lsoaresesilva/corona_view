@@ -8,7 +8,7 @@ Creating user interfaces for busines apps on Corona can be hard task if you comp
 
 This library was inspired on Android and JavaFX user interface creation, and enables the creation of user interfaces through XML files.
 
-** Resources:
+### Resources:
 
 *** Support for Corona components: buttons, textfields, textbox, texts and images.
 
@@ -38,9 +38,13 @@ You can define a bind between a variable and a input component like textfield. E
 
 Every component added to layout will automatically create a reference as a lua variable. Kind of a dependency injection.
 
+*** Support for minimal input field validation
+
+You can define which input fields (Text Fields or box) cannot be empty and if it is empty a message will be shown to user.
+
 ## Instalation
 
-Just copy view.lua, linear_layout.lua, slaxdom.lua and slaxml.lua to yout Corona project's folder.
+Copy view.lua and libs folder to your project folder. Import view.lua to use it.
 
 ## Usage
 
