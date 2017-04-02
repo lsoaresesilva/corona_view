@@ -443,7 +443,9 @@ function t:extractLayout(layout)
                 hlayout:insert(innerLayout, false)
             else
                 if childFound.id ~= nil then
-                    self.controller[childFound.id] = childFound
+                    if self.controller ~= nil then
+                        self.controller[childFound.id] = childFound
+                    end
                 end
                 hlayout:insert(childFound, false)
             end
