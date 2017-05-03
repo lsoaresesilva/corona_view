@@ -1,0 +1,11 @@
+<LinearLayout id="layoutLinear"  orientation="horizontal" align="center">
+    <Text id="txt" text="primeirotexto" />
+    <BlankSpace id="espacobrancoum" x="10" y="0" width="10" height="20"/>
+    <LinearLayout id="layoutbtnum"  orientation="horizontal" align="center">
+        
+       <Text id="txtum" text="textos" />
+       <Text id="txtdois" text="opa" />
+    </LinearLayout>
+    <Text id="txttres" text="aeewew" />
+    
+</LinearLayout>

@@ -33,6 +33,7 @@
 
     TODO: 
     
+    * Tirar a obrigatoriedade do style (5)
     * Possibilitar recursos de validação (5)
     * Suporte para scroll (5)
     * Fazer um listener para os inputs. Ao alterar eles então deve ser pego o model e atualizar o seu valor (5)
@@ -149,35 +150,37 @@ end
 function t:applyCss(component, properties)
     if component.type == "text" or component.type == "textField" or component.type == "button" or component.type == "textBox" then
         local css = require("style")
-        local color = require("libs.convertcolor")
+        if type(css) == "table" then 
+            local color = require("libs.convertcolor")
 
-        if properties.class ~= nil then
-            if css[properties.class] ~= nil then
-                    for k, v in pairs(css[properties.class]) do
-                        if component.type == "text" or component.type == "button" then
-                            if k == "color" then
-                                component:setFillColor(color.hex(v))
+            if properties.class ~= nil then
+                if css[properties.class] ~= nil then
+                        for k, v in pairs(css[properties.class]) do
+                            if component.type == "text" or component.type == "button" then
+                                if k == "color" then
+                                    component:setFillColor(color.hex(v))
+                                end
+                            end
+
+                            if component.type == "textField" or component.type == "textBox" then
+                                if k == "font" then
+                                    local size = css[properties.class].size or 23
+                                    component.font = native.newFont( v, size )
+                                    component:resizeHeightToFitFont()
+                                elseif k == "align" then
+                                    component.align = v
+                                end
+                            end
+
+                            if component.type == "text" or component.type == "textField" or component.type == "textBox" then
+                                if k == "size" then
+                                    component.size = v
+                                end
                             end
                         end
-
-                        if component.type == "textField" or component.type == "textBox" then
-                            if k == "font" then
-                                local size = css[properties.class].size or 23
-                                component.font = native.newFont( v, size )
-                                component:resizeHeightToFitFont()
-                            elseif k == "align" then
-                                component.align = v
-                            end
-                        end
-
-                        if component.type == "text" or component.type == "textField" or component.type == "textBox" then
-                            if k == "size" then
-                                component.size = v
-                            end
-                        end
-                    end
+                end
+            
             end
-        
         end
 
          --unrequire( "style" )
@@ -213,10 +216,11 @@ function t:drawInvalidComponentsAlert(invalidComponents)
     timer.performWithDelay(3000, function(event)
     
         for i=1, group.numChildren do
-            local res = group[i]
-            print(res) -- dando nil
-            group[i]:removeSelf()
-            group[i] = nil
+            
+            if group[i] ~= nil then
+                group[i]:removeSelf()
+                group[i] = nil
+            end
         
         end
         

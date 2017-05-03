@@ -1,0 +1,20 @@
+<LinearLayout id="layoutLinear"  orientation="vertical" align="center">
+    <TextField id="txtField"/>
+    <BlankSpace id="espacobrancoum" x="0" y="0" width="10" height="20"/>
+    <LinearLayout id="layoutbtnum"  orientation="horizontal" align="center">
+        
+        <Image filename="btn_1.png" width="50" height="50" />
+        <Image filename="btn_1.png" width="50" height="50" />
+        <Image filename="btn_1.png" width="50" height="50" />
+        <Image filename="btn_1.png" width="50" height="50" />
+    </LinearLayout>
+    <BlankSpace id="espacobrancdois" x="0" y="0" width="10" height="20"/>
+    <LinearLayout id="layoutbtnum"  orientation="horizontal" align="center">
+        
+        <Image filename="btn_1.png" width="50" height="50" />
+        <Image filename="btn_1.png" width="50" height="50" />
+        <Image filename="btn_1.png" width="50" height="50" />
+        <Image filename="btn_1.png" width="50" height="50" />
+    </LinearLayout>
+    
+</LinearLayout>
