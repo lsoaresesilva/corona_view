@@ -187,12 +187,26 @@ function linear_layout:positionElement(totaComponentslHeightOnScreen, totalWidth
 
         if level == 1  then
         
-            if self.parentLayout.orientation == "horizontal" then
-                posX = componentReference.x + componentReference.width
-                posY = componentReference.y
+           if self.parentLayout.orientation == "horizontal" then
+                -- caso o componentReferente seja um layout o atributo x está no atributo
+                -- layout deste component
+                if componentReference.type=="layout" then 
+                  posX = componentReference.layout.x
+                  posY = componentReference.y
+                else
+                  posX = componentReference.x + componentReference.width
+                  posY = componentReference.y
+                end
             else
+              -- caso o componentReferente seja um layout o atributo y está no atributo
+              -- layout deste component
+              if componentReference.type=="layout" then 
+                posY = componentReference.layout.y
+                posX = (display.contentWidth-actualWidthSize)*0.5
+              else  
                 posY = componentReference.y + componentReference.height
                 posX = (display.contentWidth-actualWidthSize)*0.5
+              end  
             end
         else
             if self.orientation == "horizontal" then
@@ -200,10 +214,8 @@ function linear_layout:positionElement(totaComponentslHeightOnScreen, totalWidth
                 posX = componentReference.x+componentReference.width + self.paddingX
             else
                 posY = componentReference.y + componentReference.height
-                posX = componentReference.x
-                
+                posX = componentReference.x   
             end
-        
         end
         component.x = posX
         component.y = posY
